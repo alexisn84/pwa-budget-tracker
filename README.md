@@ -45,7 +45,7 @@ To deploy an application with a MongoDB database to Heroku, you'll need to set u
 The deployed application can be used at [Heroku](https://hidden-wildwood-88452.herokuapp.com/) 
 
 ## Images
-<img href=>
+<img src="https://github.com/alexisn84/pwa-budget-tracker/blob/main/public/images/overview.png">
 
 ## License Details 
 This project is MIT licensed.
