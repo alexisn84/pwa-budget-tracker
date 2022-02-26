@@ -5,17 +5,13 @@ let db;
 const request = indexedDB.open('budget_tracker', 1);
 
 //emit if db version changes
-request.onupgradeneeded = function(event) {
-    //save ref to db
+request.onupgradeneeded = function (event) {
     const db = event.target.result;
-
-    //create object called new transactions set it autoincrement PK
-    db.createObjectStore('new_transaction', { autoIncrement: true });
+    db.createObjectStore('transaction', { autoIncrement: true });
 };
 
 //if successful
 request.onsuccess = function (event) {
-    //create object if db is succesfful
     db = event.target.result;
 
     //check if online and upload transactions if so
@@ -33,34 +29,33 @@ request.onerror = function (event) {
 //function to execute if attempt to submit and no internet
 function saveRecord(record) {
     //read write permission to new transaction
-    const transaction = db.transaction(['new_transaction'], 'readwrite');
+    const transaction = db.transaction(['transaction'], 'readwrite');
 
     //access object to store
-    const budgetObjectStore = transaction.object('new_transaction');
+    const transactionObjectStore = transaction.objectStore('transaction');
 
     //add record
-    budgetObjectStore.add(record);
+    transactionObjectStore.add(record);
 }
 
 function uploadTransaction() {
-    //open on db
-    const transaction = db.transaction(['new_transaction'], 'readwrite');
+    const transaction = db.transaction(['transaction'], 'readwrite');
 
     //access object
-    const budgetObjectStore = transaction.ObjectStore('new_transaction');
+    const transactionObjectStore = transaction.objectStore('transaction');
 
     //get all records set to variable
-    const getAll = budgetObjectStore.getAll();
+    const getAll = transactionObjectStore.getAll();
 
-    getAll.onsuccess = function() {
-        //send data on IndexedDB to api server
+    getAll.onsuccess = function () {
+        // if there was data in indexedDb's store, let's send it to the api server
         if (getAll.result.length > 0) {
-            fetch('/api/transactions', {
+            fetch('/api/transaction/bulk', {
                 method: 'POST',
                 body: JSON.stringify(getAll.result),
                 headers: {
-                    Accept: 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json'
+                Accept: 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
                 }
             })
             .then(response => response.json())
@@ -69,13 +64,13 @@ function uploadTransaction() {
                     throw new Error(serverResponse);
                 }
                 //open transaction
-                const transaction = db.transaction(['new_transaction'], 'readwrite');
+                const transaction = db.transaction(['transaction'], 'readwrite');
 
                 //access new transaction store
-                const budgetObjectStore = transaction.ObjectStore('new_transaction');
+                let transactionsObjectStore = transaction.objectStore('transaction');
 
                 //clear all items
-                budgetObjectStore.clear();
+                transactionsObjectStore.clear();
 
                 alert('All saved transactions have been posted');
             })
