@@ -19,10 +19,10 @@ request.onsuccess = function (event) {
     db = event.target.result;
 
     //check if online and upload transactions if so
-    if(navigate.online) [
+    if(navigate.online){ 
         //upload tranactions
-        //uploadTransactions();
-    ]
+        uploadTransaction();
+    }
 };
 
 //log error 
