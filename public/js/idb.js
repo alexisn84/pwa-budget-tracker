@@ -4,6 +4,7 @@ let db;
 //connection to IndexDB db called 'budget_tracket' v1
 const request = indexedDB.open('budget_tracker', 1);
 
+
 //emit if db version changes
 request.onupgradeneeded = function (event) {
     const db = event.target.result;
@@ -68,8 +69,8 @@ function uploadTransaction() {
 
                 //access new transaction store
                 let transactionsObjectStore = transaction.objectStore('transaction');
-
-                //clear all items
+                
+                // clear all transactions in your store
                 transactionsObjectStore.clear();
 
                 alert('All saved transactions have been posted');
